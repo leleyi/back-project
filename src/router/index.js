@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import First from '@/components/First'
 import Home from '@/components/Home'
 import GoodsList from '@/components/PersonalGoods/GoodsList'
+import Chat from '@/components/Chat/Chat'
+import Login from '@/components/Login'
 
 Vue.use(Router)
 
@@ -14,12 +14,15 @@ export default new Router({
       name: 'Home',
       component: Home,
       children: [
-        {   path:'/GoodsList', component:GoodsList,}
+        {path:'/GoodsList',component:GoodsList,},
+        {path:'/Chat',component:Chat},
       ]
     },
     {
-      path:'/first',
-      component:First
+      path: '/Login',
+      name: 'Login',
+      component: Login,
+      hidden: true
     },
   ]
 })
