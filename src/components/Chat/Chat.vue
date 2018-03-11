@@ -7,8 +7,8 @@
   </div>
 </template>
 <script>
-  import FriendChat from '@/components/chat/FriendChat'
-  import Notification from '@/components/chat/Notification'
+  import FriendChat from '@/components/Chat/FriendChat'
+  import Notification from '@/components/Chat/Notification'
   export default {
     data() {
       return {
@@ -20,9 +20,9 @@
         console.log(tab, event);
       }
     },
-    // components:{
-    //   'fc':FriendChat,
-    //   'nf':Notification
-    // }
+    components:{
+      'fc':FriendChat,
+      'nf':Notification
+    }
   };
 </script>

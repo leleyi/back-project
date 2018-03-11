@@ -589,7 +589,7 @@
       loadGoodsList() {
         var _this = this;
         this.tableLoading = true;
-        this.getRequest("http://localhost:8080/goods/getMyGoodsList?page=" + this.currentPage + "&size=10&id=1&keywords="+this.keywords).then(resp => {
+        this.getRequest("http://localhost:8080/goods/getMyGoodsList?page=" + this.currentPage + "&size=10&id=00000012&keywords="+this.keywords).then(resp => {
           this.tableLoading = false;
           if (resp && resp.status == 200) {
             var data = resp.data;

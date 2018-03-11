@@ -2,51 +2,51 @@
   <div>
     <el-container>
       <el-aside width="160px">
-        <div class="friendListDiv" v-for="(buyers,index) in hrs" :key="buyer.id" @click="toggleFriend(buyers)"
-             v-bind:class="{currentChatFriend:currentFriend.id==buyer.id}">
-          <img :src="buyer.userface" class="userfaceImg"/>
+        <div class="friendListDiv" v-for="(hr,index) in hrs" :key="hr.id" @click="toggleFriend(hr)"
+             v-bind:class="{currentChatFriend:currentFriend.id==hr.id}">
+          <img :src="hr.userface" class="userfaceImg"/>
           <el-badge :is-dot="isDotMap.get('isDot#'+currentUser.username+'#'+hr.username)!=null">{{hr.name}}</el-badge>
         </div>
         <div style="background-color: #20a0ff;height: 1px;width: 160px;"/>
       </el-aside>
-      <el-main style="padding-top: 0px;padding-bottom: 0px">
-        <div class="chatDiv" ref="chatDiv" id="chatDiv">
-          <p v-show="currentFriend.name">与
-            <el-tag type="primary" size="small" style="margin-left: 5px;margin-right: 5px">{{currentFriend.name}}
-            </el-tag>
-            聊天中
-          </p>
-          <template v-for="msg in msgList">
-            <!--发送来的消息-->
-            <div
-              style="display: flex;justify-content: flex-start;align-items: center;box-sizing: border-box;"
-              v-if="msg.from==currentFriend.username">
-              <img :src="currentFriend.userface" class="userfaceImg">
-              <div
-                style="display: inline-flex;border-style: solid;border-width: 1px;border-color: #20a0ff;border-radius: 5px;padding: 5px 8px 5px 8px">
-                {{msg.msg}}
-              </div>
-            </div>
-            <!--发出去的消息-->
-            <div v-if="msg.from!=currentFriend.username"
-                 style="display: flex;justify-content: flex-end;align-items: center;box-sizing: border-box;">
-              <div
-                style="display: inline-flex;border-style: solid;border-width: 1px;border-color: #20a0ff;border-radius: 5px;padding: 5px 8px 5px 8px;margin-right: 3px;background-color: #9eea6a">
-                {{msg.msg}}
-              </div>
-              <img :src="currentUser.userface" class="userfaceImg">
-            </div>
-          </template>
-        </div>
-        <div style="text-align: left;margin-top: 10px">
-          <el-input v-model="msg" placeholder="请输入内容" size="mini" style="width: 600px;" type="textarea"
-                    autosize></el-input>
-          <el-button :disabled="!currentFriend.id" size="small" type="primary" class="sendBtn" @click="sendMsg"><i
-            class="fa fa-send"
-            style="margin-right: 15px"></i>发送
-          </el-button>
-        </div>
-      </el-main>
+      <!--<el-main style="padding-top: 0px;padding-bottom: 0px">-->
+        <!--<div class="chatDiv" ref="chatDiv" id="chatDiv">-->
+          <!--<p v-show="currentFriend.name">与-->
+            <!--<el-tag type="primary" size="small" style="margin-left: 5px;margin-right: 5px">{{currentFriend.name}}-->
+            <!--</el-tag>-->
+            <!--聊天中-->
+          <!--</p>-->
+          <!--<template v-for="msg in msgList">-->
+            <!--&lt;!&ndash;发送来的消息&ndash;&gt;-->
+            <!--<div-->
+              <!--style="display: flex;justify-content: flex-start;align-items: center;box-sizing: border-box;"-->
+              <!--v-if="msg.from==currentFriend.username">-->
+              <!--<img :src="currentFriend.userface" class="userfaceImg">-->
+              <!--<div-->
+                <!--style="display: inline-flex;border-style: solid;border-width: 1px;border-color: #20a0ff;border-radius: 5px;padding: 5px 8px 5px 8px">-->
+                <!--{{msg.msg}}-->
+              <!--</div>-->
+            <!--</div>-->
+            <!--&lt;!&ndash;发出去的消息&ndash;&gt;-->
+            <!--<div v-if="msg.from!=currentFriend.username"-->
+                 <!--style="display: flex;justify-content: flex-end;align-items: center;box-sizing: border-box;">-->
+              <!--<div-->
+                <!--style="display: inline-flex;border-style: solid;border-width: 1px;border-color: #20a0ff;border-radius: 5px;padding: 5px 8px 5px 8px;margin-right: 3px;background-color: #9eea6a">-->
+                <!--{{msg.msg}}-->
+              <!--</div>-->
+              <!--<img :src="currentUser.userface" class="userfaceImg">-->
+            <!--</div>-->
+          <!--</template>-->
+        <!--</div>-->
+        <!--<div style="text-align: left;margin-top: 10px">-->
+          <!--<el-input v-model="msg" placeholder="请输入内容" size="mini" style="width: 600px;" type="textarea"-->
+                    <!--autosize></el-input>-->
+          <!--<el-button :disabled="!currentFriend.id" size="small" type="primary" class="sendBtn" @click="sendMsg"><i-->
+            <!--class="fa fa-send"-->
+            <!--style="margin-right: 15px"></i>发送-->
+          <!--</el-button>-->
+        <!--</div>-->
+      <!--</el-main>-->
     </el-container>
   </div>
 </template>
@@ -54,7 +54,7 @@
   export default{
     data(){
       return {
-        buyers: [],
+        hrs: [],
         msg: '',
         currentUser: this.$store.state.user,
         currentFriend: {}
@@ -103,24 +103,24 @@
       },
       toggleFriend(hr){
         //切换数据
-        if (buyer == this.currentFriend) {
+        if (hr == this.currentFriend) {
           return;
         }
         this.currentFriend = hr;
-        this.$store.commit('updateCurrentFriend', buyer);
+        this.$store.commit('updateCurrentFriend', hr);
         this.updateChatDiv();
-        this.$store.commit("removeValueDotMap", "isDot#" + this.currentUser.username + "#" + buyer.username);
+        this.$store.commit("removeValueDotMap", "isDot#" + this.currentUser.username + "#" + hr.username);
         document.getElementById('chatDiv').scrollTop = document.getElementById('chatDiv').scrollHeight;
       },
-      loadBuyers(){
+      loadHrs(){
         var _this = this;
-        this.getRequest("/chat/Buyers").then(resp=> {
-          _this.buyers = resp.data;
+        this.getRequest("/chat/hrs").then(resp=> {
+          _this.hrs = resp.data;
         })
       }
     },
     mounted: function () {
-      this.loadBuyers();
+      this.loadHrs();
     }
   }
 </script>

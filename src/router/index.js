@@ -16,7 +16,7 @@ export default new Router({
       children: [
         {path:'/GoodsList',component:GoodsList,},
         {path:'/Chat',component:Chat},
-      ]
+      ],
     },
     {
       path: '/Login',
