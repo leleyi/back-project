@@ -2,62 +2,75 @@
   <div>
     <el-container>
       <el-aside width="160px">
-        <div class="friendListDiv" v-for="(hr,index) in hrs" :key="hr.id" @click="toggleFriend(hr)"
+        <div class="friendListDiv" v-for="hr in hrs" :key="hr.id" @click="toggleFriend(hr)"
              v-bind:class="{currentChatFriend:currentFriend.id==hr.id}">
-          <img :src="hr.userface" class="userfaceImg"/>
+          <img src="static/images/tick.png" class="userfaceImg"/>
           <el-badge :is-dot="isDotMap.get('isDot#'+currentUser.username+'#'+hr.username)!=null">{{hr.name}}</el-badge>
+          <!--<div style="background-color: darkgoldenrod;width: 20px;height: 20px"></div>-->
         </div>
-        <div style="background-color: #20a0ff;height: 1px;width: 160px;"/>
+        <div style="background-color: #6b81fd;height: 1px;width: 160px;"/>
       </el-aside>
-      <!--<el-main style="padding-top: 0px;padding-bottom: 0px">-->
-        <!--<div class="chatDiv" ref="chatDiv" id="chatDiv">-->
-          <!--<p v-show="currentFriend.name">与-->
-            <!--<el-tag type="primary" size="small" style="margin-left: 5px;margin-right: 5px">{{currentFriend.name}}-->
-            <!--</el-tag>-->
-            <!--聊天中-->
-          <!--</p>-->
-          <!--<template v-for="msg in msgList">-->
-            <!--&lt;!&ndash;发送来的消息&ndash;&gt;-->
-            <!--<div-->
-              <!--style="display: flex;justify-content: flex-start;align-items: center;box-sizing: border-box;"-->
-              <!--v-if="msg.from==currentFriend.username">-->
-              <!--<img :src="currentFriend.userface" class="userfaceImg">-->
-              <!--<div-->
-                <!--style="display: inline-flex;border-style: solid;border-width: 1px;border-color: #20a0ff;border-radius: 5px;padding: 5px 8px 5px 8px">-->
-                <!--{{msg.msg}}-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--&lt;!&ndash;发出去的消息&ndash;&gt;-->
-            <!--<div v-if="msg.from!=currentFriend.username"-->
-                 <!--style="display: flex;justify-content: flex-end;align-items: center;box-sizing: border-box;">-->
-              <!--<div-->
-                <!--style="display: inline-flex;border-style: solid;border-width: 1px;border-color: #20a0ff;border-radius: 5px;padding: 5px 8px 5px 8px;margin-right: 3px;background-color: #9eea6a">-->
-                <!--{{msg.msg}}-->
-              <!--</div>-->
-              <!--<img :src="currentUser.userface" class="userfaceImg">-->
-            <!--</div>-->
-          <!--</template>-->
-        <!--</div>-->
-        <!--<div style="text-align: left;margin-top: 10px">-->
-          <!--<el-input v-model="msg" placeholder="请输入内容" size="mini" style="width: 600px;" type="textarea"-->
-                    <!--autosize></el-input>-->
-          <!--<el-button :disabled="!currentFriend.id" size="small" type="primary" class="sendBtn" @click="sendMsg"><i-->
-            <!--class="fa fa-send"-->
-            <!--style="margin-right: 15px"></i>发送-->
-          <!--</el-button>-->
-        <!--</div>-->
-      <!--</el-main>-->
+      <el-main style="padding-top: 0px;padding-bottom: 0px">
+        <div class="chatDiv" ref="chatDiv" id="chatDiv">
+          <p v-show="currentFriend.name">与
+            <el-tag type="primary" size="small" style="margin-left: 5px;margin-right: 5px">{{currentFriend.name}}
+            </el-tag>
+            聊天中
+          </p>
+          <template v-for="msg in msgList">
+            <!--发送来的消息-->
+            <div
+              style="display: flex;justify-content: flex-start;align-items: center;box-sizing: border-box;"
+              v-if="msg.from==currentFriend.username">
+              <img src="static/images/tick.png" class="userfaceImg">
+              <div
+                style="display: inline-flex;border-style: solid;border-width: 1px;border-color: #20a0ff;border-radius: 5px;padding: 5px 8px 5px 8px">
+                {{msg.msg}}
+              </div>
+            </div>
+            <!--发出去的消息-->
+            <div v-if="msg.from!=currentFriend.username"
+                 style="display: flex;justify-content: flex-end;align-items: center;box-sizing: border-box;">
+              <div
+                style="display: inline-flex;border-style: solid;border-width: 1px;border-color: #20a0ff;border-radius: 5px;padding: 5px 8px 5px 8px;margin-right: 3px;background-color: #9eea6a">
+                {{msg.msg}}
+              </div>
+              <img src="static/images/tick.png"  class="userfaceImg">
+            </div>
+          </template>
+        </div>
+        <div style="text-align: left;margin-top: 10px">
+          <el-input v-model="msg" placeholder="请输入内容" size="mini" style="width: 600px;" type="textarea"
+                    autosize></el-input>
+          <el-button :disabled="!currentFriend.id" size="small" type="primary" class="sendBtn" @click="sendMsg"><i
+            class="fa fa-send"
+            style="margin-right: 15px"></i>发送
+          </el-button>
+        </div>
+      </el-main>
     </el-container>
   </div>
 </template>
 <script>
+
+  var sender=[
+    {id:1,name:"小华"},
+    {id:2,name:"小李"},
+    {id:3,name:"小张"},
+    {id:4,name:"小乌龟"},
+    {id:6,name:"小王八"},
+    {id:7,name:"小鳖孙"},
+  ]
+
+  //this.$store.state.user, //当前用户
+  var currUser={id:1,usernam:"天外飞仙"}
   export default{
     data(){
       return {
-        hrs: [],
+        hrs: sender,
         msg: '',
         currentUser: this.$store.state.user,
-        currentFriend: {}
+        currentFriend: {id:1,name:"小华"},//当前聊天的好友
       }
     },
     computed: {
@@ -115,7 +128,7 @@
       loadHrs(){
         var _this = this;
         this.getRequest("/chat/hrs").then(resp=> {
-          _this.hrs = resp.data;
+          //_this.hrs = resp.data;
         })
       }
     },
@@ -166,6 +179,6 @@
   }
 
   .currentChatFriend {
-    background-color: #dcdfe6;
+    background-color: #6e9de6;
   }
 </style>
