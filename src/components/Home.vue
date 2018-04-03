@@ -9,7 +9,7 @@
           </el-badge>
           <el-dropdown @command="handleCommand">
   <span class="el-dropdown-link home_userinfo" style="display: flex;align-items: center">
-    <!--{{user.name}}--> 小兔子
+    {{user.username}}
     <!--<i><images v-if="user.userface!=''" :src="user.userface"-->
     <!--style="width: 40px;height: 40px;margin-right: 5px;margin-left: 5px;border-radius: 40px"/></i>-->
   </span>
@@ -25,16 +25,18 @@
       <el-container>
         <el-aside width="150px" class="home-aside" style="background-color:darkgoldenrod">
           <el-row class="tac" style="height: 100%">
-            <el-col :span="24">
+            <el-col :span="24">  <!--@open="handleOpen"-->
+              <!--@close="handleClose"-->
               <el-menu
                 default-active="2"
                 class="el-menu-vertical-demo"
                 background-color="darkgoldenrod"
                 text-color="#fff"
                 active-text-color="#ffd04b">
+                <!--<el-submenu index="1">   </el-submenu>-->
                 <el-menu-item index="1">
                     <i class="el-icon-setting" ></i>
-                    <span slot="title"><router-link to="/GoodsList" tag="span" >基本信息</router-link></span>
+                    <span slot="title"><router-link to="/Person" tag="span" >基本信息</router-link></span>
                 </el-menu-item>
                 <el-menu-item index="2">
                   <i class="el-icon-goods"></i>
@@ -43,14 +45,6 @@
                 <el-menu-item index="3">
                   <i class="el-icon-message"></i>
                   <span slot="title"><router-link to="/Chat" tag="span"  >我的消息</router-link></span>
-                </el-menu-item>
-                <el-menu-item index="4">
-                  <i class="el-icon-date"></i>
-                  <span slot="title"><router-link to="/GoodsList" tag="span"  >购买记录</router-link></span>
-                </el-menu-item>
-                <el-menu-item index="5" >
-                  <i class="el-icon-document"></i>
-                  <span slot="title"><router-link to="/GoodsList" tag="span" >我的心愿单</router-link></span>
                 </el-menu-item>
               </el-menu>
             </el-col>
@@ -76,37 +70,24 @@
       goChat() {
         this.$router.push({path: '/chat'});
       },
-      devMsg() {
-        this.$alert('!', '友情提示', {
-          confirmButtonText: '确定',
-          callback: action => {
-            this.$notify({
-              title: '重要重要!',
-              type: 'warning',
-              message: ' 。',
-              duration: 0
-            });
-          }
-        });
-      },
       handleCommand(cmd) {
         var _this = this;
-        // if (cmd == 'logout') {
-        //   this.$confirm('注销登录, 是否继续?', '提示', {
-        //     confirmButtonText: '确定',
-        //     cancelButtonText: '取消',
-        //     type: 'warning'
-        //   }).then(() => {
-        //     _this.getRequest("/logout");
-        //     _this.$store.commit('logout');
-        //     _this.$router.replace({path: '/'});
-        //   }).catch(() => {
-        //     _this.$message({
-        //       type: 'info',
-        //       message: '取消'
-        //     });
-        //   });
-        // }
+        if (cmd == 'logout') {
+          this.$confirm('注销登录, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            _this.getRequest("/logout");
+            _this.$store.commit('logout');
+            _this.$router.replace({path: '/'});
+          }).catch(() => {
+            _this.$message({
+              type: 'info',
+              message: '取消'
+            });
+          });
+        }
       }
     },
     data() {

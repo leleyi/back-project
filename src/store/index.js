@@ -9,19 +9,20 @@ export default new Vuex.Store({
   state: {
     user: {
       name: window.localStorage.getItem('user' || '[]') == null ? '未登录' : JSON.parse(window.localStorage.getItem('user' || '[]')).name,
-     // userface: window.localStorage.getItem('user' || '[]') == null ? '' : JSON.parse(window.localStorage.getItem('user' || '[]')).userface,
-      username: window.localStorage.getItem('user' || '[]') == null ? '' : JSON.parse(window.localStorage.getItem('user' || '[]')).username
+      // userface: window.localStorage.getItem('user' || '[]') == null ? '' : JSON.parse(window.localStorage.getItem('user' || '[]')).userface,
+      // username: window.localStorage.getItem('user' || '[]') == null ? '' : JSON.parse(window.localStorage.getItem('user' || '[]')).username
     },
     routes: [],
     msgList: [],
     isDotMap: new Map(),
     currentFriend: {},
-    chatStomp: Stomp.over(new SockJS("/ws/endpointChat"))
+    chatStomp: Stomp.over(new SockJS("http://localhost:8080/ws/endpointChat"))
   },
   mutations: {
     initMenu(state, menus){
       state.routes = menus;
     },
+
     login(state, user){
       state.user = user;
       window.localStorage.setItem('user', JSON.stringify(user));
@@ -45,9 +46,9 @@ export default new Vuex.Store({
   },
   actions: {
     connect(context){
-      context.state.chatStomp = Stomp.over(new SockJS("/ws/endpointChat"));
+      context.state.chatStomp = Stomp.over(new SockJS("http://localhost:8080/ws/endpointChat"));
       context.state.chatStomp.connect({}, frame=> {
-        context.state.chatStomp.subscribe("/user/queue/chat", message=> {
+        context.state.chatStomp.subscribe("/queue/chat", message=> {
           var msg = JSON.parse(message.body);
           var oldMsg = window.localStorage.getItem(context.state.user.username + "#" + msg.from);
           if (oldMsg == null) {
@@ -71,7 +72,7 @@ export default new Vuex.Store({
           }
         });
       }, failedMsg=> {
-
+        console.log(failedMsg)
       });
     }
   }

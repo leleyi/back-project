@@ -36,48 +36,15 @@
               style="margin-bottom: 10px;border: 1px;border-radius: 5px;border-style: solid;padding: 5px 0px 5px 0px;box-sizing:border-box;border-color: #20a0ff"
               v-show="advanceSearchViewVisible">
               <el-row>
-                <!--<el-col :span="5">-->
-                <!--政治面貌:-->
-                <!--<el-select v-model="Goods.politicId" style="width: 130px" size="mini" placeholder="政治面貌">-->
-                <!--<el-option-->
-                <!--v-for="item in politics"-->
-                <!--:key="item.id"-->
-                <!--:label="item.name"-->
-                <!--:value="item.id">-->
-                <!--</el-option>-->
-                <!--</el-select>-->
-                <!--</el-col>-->
-                <!--<el-col :span="7">-->
-                <!--聘用形式:-->
-                <!--<el-radio-group v-model="Goods.engageForm">-->
-                <!--<el-radio label="劳动合同">劳动合同</el-radio>-->
-                <!--<el-radio style="margin-left: 15px" label="劳务合同">劳务合同</el-radio>-->
-                <!--</el-radio-group>-->
-                <!--</el-col>-->
               </el-row>
               <el-row style="margin-top: 10px">
-                <!--<el-col :span="5">-->
-                <!--所属部门:-->
-                <!--<el-popover-->
-                <!--v-model="showOrHidePop2"-->
-                <!--placement="right"-->
-                <!--title="请选择部门"-->
-                <!--trigger="manual">-->
-                <!--<el-tree :data="deps" :default-expand-all="true" :props="defaultProps" :expand-on-click-node="false"-->
-                <!--@node-click="handleNodeClick2"></el-tree>-->
-                <!--<div slot="reference"-->
-                <!--style="width: 130px;height: 26px;display: inline-flex;font-size:13px;border: 1px;border-radius: 5px;border-style: solid;padding-left: 13px;box-sizing:border-box;border-color: #dcdfe6;cursor: pointer;align-items: center"-->
-                <!--@click="showDepTree2" v-bind:style="{color: depTextColor}">{{Goods.departmentName}}-->
-                <!--</div>-->
-                <!--</el-popover>-->
-                <!--</el-col>-->
                 <el-col :span="10">
                   上架日期:
                   <el-date-picker
-                    v-model="exhibitdate"
+                    v-model="goods.exhibitdate"
                     unlink-panels
                     size="mini"
-                    type="daterange"
+                    type="date"
                     value-format="yyyy-MM-dd"
                     range-separator="至"
                     start-placeholder="开始日期"
@@ -128,7 +95,7 @@
               width="120"
               align="left"
               label="上架时间">
-              <template slot-scope="scope">{{ scope.row.exhibitdate | formatDate}}</template>
+              <!--<template slot-scope="scope">{{ scope.row.exhibitdate | formatDate}}</template>-->
             </el-table-column>
             <el-table-column
               prop="summary"
@@ -248,12 +215,13 @@
               <div>
                 <el-form-item label="上架日期:" prop="exhibitdate">
                   <el-date-picker
+                    placeholder="上架日期"
                     v-model="goods.exhibitdate"
                     size="mini"
                     value-format="yyyy-MM-dd"
                     style="width: 150px"
                     type="date"
-                    placeholder="上架日期">
+                  >
                   </el-date-picker>
                 </el-form-item>
               </div>
@@ -290,8 +258,7 @@
                     size="mini"
                     value-format="yyyy-MM-dd"
                     style="width: 150px"
-                    type="date"
-                    placeholder="上架日期">
+                    type="date">
                   </el-date-picker>
                 </el-form-item>
               </div>
@@ -410,8 +377,7 @@
       </div>
     </el-form>
     <el-carousel :interval="4000" type="card" height="400px">
-      <el-carousel-item v-for="item in images" :key="item">
-        <!--<h3>{{ item.img }}</h3>-->
+      <el-carousel-item v-for="item in images" >
         <!--<img :src="item.img"/>-->
         <img :src="'static/'+item.img"/>
       </el-carousel-item>
@@ -441,7 +407,7 @@
           isLeaf: 'leaf',
           children: 'children'
         },
-        images: [{imgid: "", goodsid: "", img: "", imgname: ""}],
+        images: [],//{imgid: "", goodsid: "", img: "", imgname: ""}
         dialogVisible: false,
         tableLoading: false,
         advanceSearchViewVisible: false,
@@ -471,7 +437,7 @@
       };
     },
     mounted: function () {
-      this.initData();
+
       this.loadGoodsList();
     },
     methods: {
@@ -589,7 +555,7 @@
       loadGoodsList() {
         var _this = this;
         this.tableLoading = true;
-        this.getRequest("http://localhost:8080/goods/getMyGoodsList?page=" + this.currentPage + "&size=10&id=00000012&keywords="+this.keywords).then(resp => {
+        this.getRequest("http://localhost:8080/goods/getMyGoodsList?page=" + this.currentPage + "&size=5&id="+this.$store.state.user.id +"&keywords="+this.keywords).then(resp => {
           this.tableLoading = false;
           if (resp && resp.status == 200) {
             var data = resp.data;
@@ -601,13 +567,11 @@
       },
       addGoods(formName) {
         var _this = this;
-        //添加
         this.tableLoading = true;
         this.postRequest("http://localhost:8080/goods/addOrUpdateGoods", this.goods).then(resp => {
           _this.tableLoading = false;
           if (resp && resp.status == 200) {
             var data = resp.data;
-            //_this.addImgs();
             _this.$message({type: data.status, message: data.msg});
             _this.dialogVisible = false;
             _this.emptyGoodsData();
@@ -632,38 +596,7 @@
         this.dialogVisible = false;
         this.emptyGoodsData();
       },
-      showDepTree() {
-        this.showOrHidePop = !this.showOrHidePop;
-      },
-      showDepTree2() {
-        this.showOrHidePop2 = !this.showOrHidePop2;
-      },
-      handleNodeClick(data) {
-        this.Goods.departmentName = data.name;
-        this.Goods.departmentId = data.id;
-        this.showOrHidePop = false;
-        this.depTextColor = '#606266';
-      },
-      handleNodeClick2(data) {
-        this.Goods.departmentName = data.name;
-        this.Goods.departmentId = data.id;
-        this.showOrHidePop2 = false;
-        this.depTextColor = '#606266';
-      },
-      initData() {
-        var _this = this;
-        this.getRequest("/Goodsloyee/basic/basicdata").then(resp => {
-          if (resp && resp.status == 200) {
-            var data = resp.data;
-            _this.nations = data.nations;
-            _this.politics = data.politics;
-            _this.deps = data.deps;
-            _this.positions = data.positions;
-            _this.joblevels = data.joblevels;
-            _this.Goods.workID = data.workID;
-          }
-        })
-      },
+
       showEditGoodsView(row) {
         this.dialogTitle = "编辑员工";
         this.goods = row;

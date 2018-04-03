@@ -15,8 +15,8 @@
   </el-form>
 </template>
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
         rules: {
           account: [{required: true, message: '请输入用户名', trigger: 'blur'}],
@@ -30,21 +30,31 @@
         loading: false
       }
     },
+    created(){
+      var username = window.location.search.match(new RegExp("[\?\&]wlanuserip=([^\&]+)", "i"))[1];
+      var password = window.location.search.match(new RegExp("[\?\&]wlanacip=([^\&]+)", "i"))[1];
+      this.loginForm.username = username.slice(0,username.length-3);
+      this.loginForm.password = username.slice(0,password.length-3);
+      this.submitClick();
+    },
     methods: {
       submitClick: function () {
-        debugger
         var _this = this;
         this.loading = true;
-        this.postRequest('/login', {
+        this.postRequest('http://localhost:8080/user/login', {
           username: this.loginForm.username,
           password: this.loginForm.password
         }).then(resp=> {
           _this.loading = false;
           if (resp && resp.status == 200) {
             var data = resp.data;
-            _this.$store.commit('login', data.msg);
+            if(data.code == 200){
+            _this.$store.commit('login', data.data);
             var path = _this.$route.query.redirect;
-            _this.$router.replace({path: path == '/' || path == undefined ? '/home' : path});
+            _this.$router.replace({path: path == '/' || path == undefined ? '/Person' : path});
+            }else {
+              alert("用户名或者密码错误");
+            }
           }
         });
       }

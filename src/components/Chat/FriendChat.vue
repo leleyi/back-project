@@ -2,10 +2,10 @@
   <div>
     <el-container>
       <el-aside width="160px">
-        <div class="friendListDiv" v-for="hr in hrs" :key="hr.id" @click="toggleFriend(hr)"
-             v-bind:class="{currentChatFriend:currentFriend.id==hr.id}">
+        <div class="friendListDiv" v-for="user in users" :key="user.id" @click="toggleFriend(user)"
+             v-bind:class="{currentChatFriend:currentFriend.id==user.id}">
           <img src="static/images/tick.png" class="userfaceImg"/>
-          <el-badge :is-dot="isDotMap.get('isDot#'+currentUser.username+'#'+hr.username)!=null">{{hr.name}}</el-badge>
+          <el-badge :is-dot="isDotMap.get('isDot#'+currentUser.username+'#'+user.username)!=null">{{user.username}}</el-badge>
           <!--<div style="background-color: darkgoldenrod;width: 20px;height: 20px"></div>-->
         </div>
         <div style="background-color: #6b81fd;height: 1px;width: 160px;"/>
@@ -52,25 +52,13 @@
   </div>
 </template>
 <script>
-
-  var sender=[
-    {id:1,name:"小华"},
-    {id:2,name:"小李"},
-    {id:3,name:"小张"},
-    {id:4,name:"小乌龟"},
-    {id:6,name:"小王八"},
-    {id:7,name:"小鳖孙"},
-  ]
-
-  //this.$store.state.user, //当前用户
-  var currUser={id:1,usernam:"天外飞仙"}
   export default{
     data(){
       return {
-        hrs: sender,
+        users: [],
         msg: '',
         currentUser: this.$store.state.user,
-        currentFriend: {id:1,name:"小华"},//当前聊天的好友
+        currentFriend: {},//当前聊天的好友
       }
     },
     computed: {
@@ -102,7 +90,7 @@
           oldMsgJson.push({msg: this.msg, from: this.$store.state.user.username});
           window.localStorage.setItem(this.$store.state.user.username + "#" + this.currentFriend.username, JSON.stringify(oldMsgJson))
         }
-        this.$store.state.chatStomp.send("/ws/chat", {}, this.msg + ";" + this.currentFriend.username);
+        this.$store.state.chatStomp.send("/ws/chat", {}, this.msg + ";" + this.currentFriend.username +"*"+ this.$store.state.user.username);
         this.msg = '';
         this.updateChatDiv();
       },
@@ -114,28 +102,31 @@
           this.$store.commit('updateMsgList', JSON.parse(oldMsg))
         }
       },
-      toggleFriend(hr){
+      toggleFriend(user){
         //切换数据
-        if (hr == this.currentFriend) {
+        if (user == this.currentFriend) {
           return;
         }
-        this.currentFriend = hr;
-        this.$store.commit('updateCurrentFriend', hr);
+        this.currentFriend = user;
+        this.$store.commit('updateCurrentFriend', user);
         this.updateChatDiv();
-        this.$store.commit("removeValueDotMap", "isDot#" + this.currentUser.username + "#" + hr.username);
+        this.$store.commit("removeValueDotMap", "isDot#" + this.currentUser.username + "#" + user.username);
         document.getElementById('chatDiv').scrollTop = document.getElementById('chatDiv').scrollHeight;
       },
-      loadHrs(){
+      loadUsers(){
         var _this = this;
-        this.getRequest("/chat/hrs").then(resp=> {
-          //_this.hrs = resp.data;
+        this.getRequest("http://localhost:8080/chat/users?id="+this.$store.state.user.id).then(resp=> {
+          _this.users = resp.data.data;
+          console.log(_this.users);
         })
       }
     },
     mounted: function () {
-      this.loadHrs();
+      //this.loadHrs();
+      this.loadUsers();
     }
   }
+
 </script>
 <style>
   .userfaceImg {

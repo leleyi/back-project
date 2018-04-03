@@ -3970,7 +3970,7 @@ function selectColor(namespace) {
 }
 
 /**
- * Create a debugger with the given `namespace`.
+ * Create a  with the given `namespace`.
  *
  * @param {String} namespace
  * @return {Function}
